@@ -1,60 +1,61 @@
-const fs = require('fs');
+const path = require('path');
 
-// function that reads numbers from a file & returns them as an array
-function readNumbers(filePath) {
-  const data = fs.readFileSync(filePath, 'utf-8');
-
-  return data
-    .split('\n')
-    .map(line => Number(line.trim()))
-    .filter(num => !isNaN(num));
-}
-
-// calculates sum of all numbers
-function calculateSum(numbers) {
-  return numbers.reduce((sum, num) => sum + num, 0);
-}
-
-// function to find the highest number
-function findMax(numbers) {
-  return Math.max(...numbers);
-}
-
-// function to find the lowest number
-function findMin(numbers) {
-  return Math.min(...numbers);
-}
-
-// calculates avg of numbers
-function calculateAverage(numbers) {
-  if (numbers.length === 0) return 0;
-  return calculateSum(numbers) / numbers.length;
-}
-
-function processNumbers(filePath) {
-  const numbers = readNumbers(filePath);
-
-  return {
-    sum: calculateSum(numbers),
-    max: findMax(numbers),
-    min: findMin(numbers),
-    average: calculateAverage(numbers)
-  };
-}
-
-// verifying these functions work
-
-console.log("Sample Numbers Analysis:");
-const result = processNumbers('data/sample-numbers.txt');
-console.log(result);
-
-// exporting function
-
-module.exports = {
+const {
   readNumbers,
   calculateSum,
   findMax,
   findMin,
   calculateAverage,
   processNumbers
-};
+} = require('../src/numberProcessor');
+
+const sampleFile = path.join(__dirname, '../data/sample-numbers.txt');
+
+describe('numberProcessor functions', () => {
+  let numbers;
+
+  beforeAll(() => {
+    // reads the numbers from the sample file to be used in tests
+    numbers = readNumbers(sampleFile);
+  });
+
+  test('readNumbers returns an array of numbers', () => {
+    expect(Array.isArray(numbers)).toBe(true); // should return an array
+    numbers.forEach(num => expect(typeof num).toBe('number')); // all elements should be numbers
+  });
+
+  // a test for that calculateSum can return the correct sum
+  test('calculateSum returns correct sum', () => {
+    const sum = calculateSum(numbers);
+    const expectedSum = numbers.reduce((a, b) => a + b, 0); // manual sum for comparison
+    expect(sum).toBe(expectedSum);
+  });
+
+  // findMax returns the highest number
+  test('findMax returns the highest number', () => {
+    const max = findMax(numbers);
+    expect(max).toBe(Math.max(...numbers)); // compare with Math.max
+  });
+
+  // findMin returns the lowest number
+  test('findMin returns the lowest number', () => {
+    const min = findMin(numbers);
+    expect(min).toBe(Math.min(...numbers)); // compare with Math.min
+  });
+
+  // calculateAverage returns the correct avg
+  test('calculateAverage returns the average', () => {
+    const avg = calculateAverage(numbers);
+    const expectedAvg = numbers.reduce((a, b) => a + b, 0) / numbers.length; // manual calculation
+    expect(avg).toBe(expectedAvg);
+  });
+
+  // processNumbers returns an object with all keys
+  test('processNumbers returns an object with sum, max, min, average', () => {
+    const result = processNumbers(sampleFile);
+    expect(result).toHaveProperty('sum');
+    expect(result).toHaveProperty('max');
+    expect(result).toHaveProperty('min');
+    expect(result).toHaveProperty('average');
+  });
+});

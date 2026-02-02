@@ -54,7 +54,6 @@ describe('numberProcessor functions', () => {
         expect(result).toHaveProperty('average');
     });
 
-    // --- Edge cases ---
     test('functions handle empty array', () => {
         expect(calculateSum([])).toBe(0);
         expect(findMax([])).toBe(-Infinity);
@@ -86,3 +85,4 @@ describe('numberProcessor functions', () => {
         expect(calculateAverage(nums)).toBeCloseTo(7 / 3);
     });
 });
+
